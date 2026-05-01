@@ -2,7 +2,7 @@
 import MainLayout from "../layouts/MainLayout.astro";
 import { getCollection } from "astro:content";
 
-// ================= TOOLS (PAKAI PUNYA KAMU) =================
+// ================= TOOLS =================
 const modules = Object.entries(
   import.meta.glob('./tools/**/*.astro', { eager: true })
 );
@@ -18,7 +18,7 @@ const tools = modules
     return {
       type: "tool",
       title: mod.meta.title,
-      description: mod.meta.description,
+      description: mod.meta.description || "",
       url
     };
   })
@@ -30,7 +30,7 @@ const posts = await getCollection("blog");
 const blogs = posts.map(post => ({
   type: "blog",
   title: post.data.title,
-  description: post.data.description,
+  description: post.data.description || "",
   url: `/blog/${post.id}/`
 }));
 
@@ -40,20 +40,19 @@ const allContent = [...tools, ...blogs];
 
 <MainLayout title="Search">
 
-<h1>Search</h1>
+<div class="search-container">
 
-<input id="search" placeholder="Cari tools & blog..." />
+  <h1>Search</h1>
 
-<div id="results"></div>
+  <input id="search" placeholder="Cari tools & blog..." />
 
-<!-- DATA -->
-<script id="data" type="application/json">
-  {JSON.stringify(allContent)}
-</script>
+  <div id="results"></div>
 
-<!-- SCRIPT -->
+</div>
+
+<!-- SCRIPT (SATU BLOK SAJA) -->
 <script is:inline>
-  const data = JSON.parse(document.getElementById('data').textContent);
+  const data = JSON.parse(`{JSON.stringify(allContent)}`);
 
   const input = document.getElementById('search');
   const results = document.getElementById('results');
@@ -62,14 +61,14 @@ const allContent = [...tools, ...blogs];
     const q = input.value.toLowerCase();
 
     const filtered = data.filter(item =>
-      item.title.toLowerCase().includes(q) ||
-      item.description?.toLowerCase().includes(q)
+      (item.title || "").toLowerCase().includes(q) ||
+      (item.description || "").toLowerCase().includes(q)
     );
 
     results.innerHTML = filtered.map(item => `
       <a href="${item.url}" class="card">
         <strong>${item.title}</strong>
-        <p>${item.description || ''}</p>
+        <p>${item.description}</p>
         <small>${item.type === 'tool' ? '🛠 Tool' : '📝 Blog'}</small>
       </a>
     `).join('');
@@ -77,6 +76,12 @@ const allContent = [...tools, ...blogs];
 </script>
 
 <style>
+.search-container {
+  max-width: 700px;
+  margin: auto;
+  padding: 20px;
+}
+
 input {
   width: 100%;
   padding: 12px;
@@ -85,10 +90,14 @@ input {
 
 .card {
   display: block;
-  padding: 10px;
+  padding: 12px;
   border-bottom: 1px solid #ddd;
   text-decoration: none;
   color: inherit;
+}
+
+.card:hover {
+  background: #f5f5f5;
 }
 </style>
 
