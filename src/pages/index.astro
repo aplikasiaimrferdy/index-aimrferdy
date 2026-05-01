@@ -21,7 +21,6 @@ const tools = modules
   })
   .filter(Boolean);
 
-// featured tools
 const featuredTools = tools.filter(t => t.featured).slice(0, 6);
 
 // =====================
@@ -41,13 +40,25 @@ const jsonLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
   name: "AI Mr Ferdy",
+  url: "https://aimrferdy.com",
+  potentialAction: {
+    "@type": "SearchAction",
+    target: "https://aimrferdy.com/blog?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+};
+
+const orgLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "AI Mr Ferdy",
   url: "https://aimrferdy.com"
 };
 ---
 
 <MainLayout 
-  title="AI Mr Ferdy - Tools Online Gratis & Blog SEO"
-  description="Platform tools online gratis + blog SEO & AI untuk bantu ranking Google"
+  title="AI Mr Ferdy - Tools AI Gratis untuk SEO, Konten & Produktivitas"
+  description="Platform tools AI gratis untuk SEO, konten, teks, gambar, dan produktivitas digital tanpa install."
   url="https://aimrferdy.com"
 >
 
@@ -55,15 +66,17 @@ const jsonLd = {
 
   <!-- HERO -->
   <section class="home-hero">
-    <h1>All-in-One Tools & AI Platform 🚀</h1>
+    <!-- H1 upgrade (tanpa ubah konsep besar) -->
+    <h1>Tools AI Gratis untuk SEO, Konten & Produktivitas Digital 🚀</h1>
+
     <p>
       Gunakan tools gratis untuk SEO, teks, gambar, audio, dan lainnya.
       Tanpa install, langsung pakai.
     </p>
 
     <div class="hero-actions">
-      <a href="/tools" class="btn-primary">🚀 Mulai Tools</a>
-      <a href="/blog" class="btn-secondary">📚 Baca Blog</a>
+      <a href="/tools" class="btn-primary" title="Mulai Tools AI Gratis">🚀 Mulai Tools</a>
+      <a href="/blog" class="btn-secondary" title="Baca Blog SEO AI">📚 Baca Blog</a>
     </div>
   </section>
 
@@ -75,6 +88,16 @@ const jsonLd = {
     <div><strong>Fast</strong> & No Login</div>
   </section>
 
+  <!-- 🔥 SEO CONTENT (TAMBAHAN RINGAN, AMAN) -->
+  <section class="seo-content">
+    <h2>Apa Itu AI Mr Ferdy?</h2>
+    <p>
+      AI Mr Ferdy adalah platform tools online gratis berbasis Artificial Intelligence
+      yang membantu pembuatan konten, optimasi SEO, dan produktivitas digital.
+      Semua tools dapat digunakan langsung tanpa instalasi.
+    </p>
+  </section>
+
   <!-- FEATURED TOOLS -->
   <section>
     <div class="section-head">
@@ -84,7 +107,7 @@ const jsonLd = {
 
     <div class="tools-grid">
       {featuredTools.map(tool => (
-        <a href={tool.url} class="tool-card popular">
+        <a href={tool.url} class="tool-card popular" title={tool.title}>
           <div class="badge">HOT</div>
           <h3>{tool.title}</h3>
           <p>{tool.description}</p>
@@ -105,7 +128,11 @@ const jsonLd = {
         <a href={`/blog/${post.id}/`} class="blog-card">
 
           <div class="blog-thumb">
-            <img src={post.data.heroImage} alt={post.data.title} />
+            <img 
+              src={post.data.heroImage} 
+              alt={`Artikel ${post.data.title} tentang SEO dan AI`}
+              loading="lazy"
+            />
           </div>
 
           <div class="blog-content">
@@ -134,15 +161,17 @@ const jsonLd = {
 {JSON.stringify(jsonLd)}
 </script>
 
+<script type="application/ld+json">
+{JSON.stringify(orgLd)}
+</script>
+
 <style>
-/* BLOG GRID HOMEPAGE */
 .blog-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 20px;
 }
 
-/* CARD */
 .blog-card {
   display: block;
   border-radius: 14px;
@@ -158,7 +187,6 @@ const jsonLd = {
   transform: translateY(-4px);
 }
 
-/* IMAGE FIX */
 .blog-thumb {
   width: 100%;
   height: 160px;
@@ -171,7 +199,6 @@ const jsonLd = {
   object-fit: cover;
 }
 
-/* CONTENT */
 .blog-content {
   padding: 14px;
 }
