@@ -34,49 +34,36 @@ const posts = allPosts
   .slice(0, 4);
 
 // =====================
-// SEO
+// SEO JSON-LD
 // =====================
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
-  name: "AI Mr Ferdy",
-  url: "https://aimrferdy.com",
-  potentialAction: {
-    "@type": "SearchAction",
-    target: "https://aimrferdy.com/blog?q={search_term_string}",
-    "query-input": "required name=search_term_string"
-  }
-};
-
-const orgLd = {
-  "@context": "https://schema.org",
-  "@type": "Organization",
   name: "AI Mr Ferdy",
   url: "https://aimrferdy.com"
 };
 ---
 
 <MainLayout 
-  title="AI Mr Ferdy - Tools AI Gratis untuk SEO, Konten & Produktivitas"
-  description="Platform tools AI gratis untuk SEO, konten, teks, gambar, dan produktivitas digital tanpa install."
+  title="AI Mr Ferdy - Platform AI & Tools Gratis untuk Konten dan SEO"
+  description="AI Mr Ferdy adalah platform AI Indonesia untuk membuat konten, SEO, dan produktivitas digital dengan tools gratis tanpa install."
   url="https://aimrferdy.com"
 >
 
 <div class="home-container">
 
-  <!-- HERO -->
+  <!-- 🔥 BRANDING (PENTING BANGET) -->
   <section class="home-hero">
-    <!-- H1 upgrade (tanpa ubah konsep besar) -->
-    <h1>Tools AI Gratis untuk SEO, Konten & Produktivitas Digital 🚀</h1>
+    <h1>AI Mr Ferdy: Platform AI untuk Konten & Produktivitas Digital</h1>
 
     <p>
-      Gunakan tools gratis untuk SEO, teks, gambar, audio, dan lainnya.
-      Tanpa install, langsung pakai.
+      AI Mr Ferdy adalah platform berbasis Artificial Intelligence yang menyediakan
+      tools online gratis untuk membantu pembuatan konten, SEO, dan produktivitas digital.
     </p>
 
     <div class="hero-actions">
-      <a href="/tools" class="btn-primary" title="Mulai Tools AI Gratis">🚀 Mulai Tools</a>
-      <a href="/blog" class="btn-secondary" title="Baca Blog SEO AI">📚 Baca Blog</a>
+      <a href="/tools" class="btn-primary">🚀 Mulai Tools</a>
+      <a href="/blog" class="btn-secondary">📚 Baca Blog</a>
     </div>
   </section>
 
@@ -88,13 +75,13 @@ const orgLd = {
     <div><strong>Fast</strong> & No Login</div>
   </section>
 
-  <!-- 🔥 SEO CONTENT (TAMBAHAN RINGAN, AMAN) -->
-  <section class="seo-content">
+  <!-- APA ITU -->
+  <section>
     <h2>Apa Itu AI Mr Ferdy?</h2>
     <p>
-      AI Mr Ferdy adalah platform tools online gratis berbasis Artificial Intelligence
-      yang membantu pembuatan konten, optimasi SEO, dan produktivitas digital.
-      Semua tools dapat digunakan langsung tanpa instalasi.
+      AI Mr Ferdy adalah platform berbasis kecerdasan buatan (Artificial Intelligence)
+      yang dirancang untuk membantu berbagai aktivitas digital seperti membuat konten,
+      menjawab pertanyaan, hingga memberikan ide kreatif.
     </p>
   </section>
 
@@ -107,7 +94,7 @@ const orgLd = {
 
     <div class="tools-grid">
       {featuredTools.map(tool => (
-        <a href={tool.url} class="tool-card popular" title={tool.title}>
+        <a href={tool.url} class="tool-card popular">
           <div class="badge">HOT</div>
           <h3>{tool.title}</h3>
           <p>{tool.description}</p>
@@ -128,11 +115,7 @@ const orgLd = {
         <a href={`/blog/${post.id}/`} class="blog-card">
 
           <div class="blog-thumb">
-            <img 
-              src={post.data.heroImage} 
-              alt={`Artikel ${post.data.title} tentang SEO dan AI`}
-              loading="lazy"
-            />
+            <img src={post.data.heroImage} alt={post.data.title} />
           </div>
 
           <div class="blog-content">
@@ -148,6 +131,48 @@ const orgLd = {
     </div>
   </section>
 
+  <!-- 🔥 KONTEN LAMA (JANGAN DIHAPUS - SEO POWER) -->
+  <section>
+    <h2>Review AI Mr Ferdy 2026: Cara Pakai, Fitur & Apakah Aman?</h2>
+
+    <p>
+      AI Mr Ferdy adalah platform AI yang saat ini banyak dicari di Indonesia.
+      Banyak pengguna ingin tahu apakah AI Mr Ferdy benar-benar berguna, aman, atau justru scam.
+    </p>
+
+    <h3>Kenapa AI Mr Ferdy Populer?</h3>
+    <ul>
+      <li>Mudah digunakan bahkan untuk pemula</li>
+      <li>Akses cepat tanpa instalasi</li>
+      <li>Cocok untuk konten & produktivitas</li>
+    </ul>
+
+    <h3>Fitur Utama</h3>
+    <ul>
+      <li>AI Chatbot</li>
+      <li>Generator Konten</li>
+      <li>AI Copywriting</li>
+      <li>Akses Gratis</li>
+    </ul>
+
+    <h3>Cara Menggunakan</h3>
+    <ol>
+      <li>Buka platform</li>
+      <li>Masukkan prompt</li>
+      <li>Dapatkan hasil</li>
+    </ol>
+
+    <h3>Apakah AI Mr Ferdy Aman?</h3>
+    <p>
+      Aman selama tidak memasukkan data sensitif dan menggunakan akses resmi.
+    </p>
+
+    <p>
+      👉 <strong>Coba sekarang:</strong><br/>
+      <a href="https://heylink.me/mrferdy" rel="nofollow">https://heylink.me/mrferdy</a>
+    </p>
+  </section>
+
   <!-- CTA -->
   <section class="home-cta">
     <h2>Mulai Gunakan Tools Sekarang</h2>
@@ -156,13 +181,9 @@ const orgLd = {
 
 </div>
 
-<!-- SEO -->
+<!-- JSON-LD -->
 <script type="application/ld+json">
 {JSON.stringify(jsonLd)}
-</script>
-
-<script type="application/ld+json">
-{JSON.stringify(orgLd)}
 </script>
 
 <style>
@@ -206,13 +227,11 @@ const orgLd = {
 .blog-content h3 {
   font-size: 0.95rem;
   margin: 0 0 6px;
-  line-height: 1.3;
 }
 
 .blog-desc {
   font-size: 0.8rem;
   color: var(--text-soft);
-  line-height: 1.4;
 }
 </style>
 
