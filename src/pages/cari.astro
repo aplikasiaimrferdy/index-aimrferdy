@@ -40,13 +40,10 @@ const pageModules = Object.entries(
 );
 
 const pages = pageModules
-  .map(([file, mod]) => {
-    // skip cari itself
+  .map(([file]) => {
     if (file.includes('cari.astro')) return null;
 
-    const name = file
-      .replace('./', '')
-      .replace('.astro', '');
+    const name = file.replace('./', '').replace('.astro', '');
 
     return {
       type: "page",
@@ -81,22 +78,16 @@ const allContent = [...tools, ...blogs, ...pages];
 
 </div>
 
+<!-- 🔥 SCRIPT UTAMA -->
 <script is:inline>
-  const data = JSON.parse(`{JSON.stringify(allContent)}`);
+  const data = {JSON.stringify(allContent)};
 
   const input = document.getElementById("search");
   const results = document.getElementById("results");
   const empty = document.getElementById("empty");
 
-  input.addEventListener("input", () => {
-    const q = input.value.toLowerCase();
-
-    const filtered = data.filter(item =>
-      (item.title || "").toLowerCase().includes(q) ||
-      (item.description || "").toLowerCase().includes(q)
-    );
-
-    results.innerHTML = filtered.map(item => `
+  function render(list) {
+    results.innerHTML = list.map(item => `
       <a href="${item.url}" class="card">
         <strong>${item.title}</strong>
         <p>${item.description}</p>
@@ -108,7 +99,22 @@ const allContent = [...tools, ...blogs, ...pages];
       </a>
     `).join('');
 
-    empty.style.display = filtered.length ? "none" : "block";
+    empty.style.display = list.length ? "none" : "block";
+  }
+
+  // ✅ tampilkan semua saat load
+  render(data);
+
+  // 🔍 search realtime
+  input.addEventListener("input", () => {
+    const q = input.value.toLowerCase();
+
+    const filtered = data.filter(item =>
+      (item.title || "").toLowerCase().includes(q) ||
+      (item.description || "").toLowerCase().includes(q)
+    );
+
+    render(filtered);
   });
 </script>
 
