@@ -1,0 +1,108 @@
+---
+const toolModules = Object.entries(
+  import.meta.glob('./tools/**/*.astro', { eager: true })
+);
+
+const tools = toolModules.map(([file, mod]) => {
+  if (!mod.meta) return null;
+
+  return {
+    type: "tool",
+    title: mod.meta.title,
+    description: mod.meta.description,
+    url: file.replace('./tools', '/tools').replace('.astro', '')
+  };
+}).filter(Boolean);
+
+
+const blogModules = Object.entries(
+  import.meta.glob('./blog/**/*.astro', { eager: true })
+);
+
+const blogs = blogModules.map(([file, mod]) => {
+  if (!mod.frontmatter) return null;
+
+  return {
+    type: "blog",
+    title: mod.frontmatter.title,
+    description: mod.frontmatter.description,
+    url: file.replace('./blog', '/blog').replace('.astro', '')
+  };
+}).filter(Boolean);
+
+const allContent = [...tools, ...blogs];
+---
+
+<html>
+<head>
+  <title>Search</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <style>
+    body {
+      font-family: sans-serif;
+      max-width: 700px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      display: block;
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+      text-decoration: none;
+      color: black;
+    }
+
+    small {
+      opacity: 0.6;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Search</h1>
+
+  <input id="search" placeholder="Cari tools & blog..." />
+
+  <div id="results"></div>
+
+  <!-- data -->
+  <script id="data" type="application/json">
+    {JSON.stringify(allContent)}
+  </script>
+
+  <!-- script -->
+  <script is:inline>
+    const data = JSON.parse(document.getElementById('data').textContent);
+
+    const input = document.getElementById('search');
+    const results = document.getElementById('results');
+
+    input.addEventListener('input', () => {
+      const q = input.value.toLowerCase();
+
+      const filtered = data.filter(item =>
+        item.title.toLowerCase().includes(q) ||
+        item.description.toLowerCase().includes(q)
+      );
+
+      results.innerHTML = filtered.map(item => `
+        <a href="${item.url}" class="card">
+          <strong>${item.title}</strong>
+          <p>${item.description}</p>
+          <small>${item.type === 'tool' ? '🛠 Tool' : '📝 Blog'}</small>
+        </a>
+      `).join('');
+    });
+  </script>
+
+</body>
+</html>
