@@ -3,11 +3,11 @@ import MainLayout from "../layouts/MainLayout.astro";
 import { getCollection } from "astro:content";
 
 // ================= TOOLS =================
-const modules = Object.entries(
+const toolModules = Object.entries(
   import.meta.glob('./tools/**/*.astro', { eager: true })
 );
 
-const tools = modules
+const tools = toolModules
   .map(([file, mod]) => {
     if (!mod.meta) return null;
 
@@ -34,30 +34,61 @@ const blogs = posts.map(post => ({
   url: `/blog/${post.id}/`
 }));
 
+// ================= PAGES =================
+const pageModules = Object.entries(
+  import.meta.glob('./*.astro', { eager: true })
+);
+
+const pages = pageModules
+  .map(([file, mod]) => {
+    // skip cari itself
+    if (file.includes('cari.astro')) return null;
+
+    const name = file
+      .replace('./', '')
+      .replace('.astro', '');
+
+    return {
+      type: "page",
+      title: name.toUpperCase(),
+      description: `Halaman ${name}`,
+      url: `/${name}`
+    };
+  })
+  .filter(Boolean);
+
 // ================= GABUNG =================
-const allContent = [...tools, ...blogs];
+const allContent = [...tools, ...blogs, ...pages];
 ---
 
-<MainLayout title="Search">
+<MainLayout title="Cari">
 
 <div class="search-container">
 
-  <h1>Search</h1>
+  <h1>Cari</h1>
 
-  <input id="search" placeholder="Cari tools & blog..." />
+  <input 
+    id="search" 
+    type="text" 
+    placeholder="Cari tools, blog, atau halaman..."
+  />
 
   <div id="results"></div>
 
+  <div id="empty" style="display:none;">
+    Tidak ditemukan
+  </div>
+
 </div>
 
-<!-- SCRIPT (SATU BLOK SAJA) -->
 <script is:inline>
   const data = JSON.parse(`{JSON.stringify(allContent)}`);
 
-  const input = document.getElementById('search');
-  const results = document.getElementById('results');
+  const input = document.getElementById("search");
+  const results = document.getElementById("results");
+  const empty = document.getElementById("empty");
 
-  input.addEventListener('input', () => {
+  input.addEventListener("input", () => {
     const q = input.value.toLowerCase();
 
     const filtered = data.filter(item =>
@@ -69,9 +100,15 @@ const allContent = [...tools, ...blogs];
       <a href="${item.url}" class="card">
         <strong>${item.title}</strong>
         <p>${item.description}</p>
-        <small>${item.type === 'tool' ? '🛠 Tool' : '📝 Blog'}</small>
+        <small>
+          ${item.type === 'tool' ? '🛠 Tool' :
+            item.type === 'blog' ? '📝 Blog' :
+            '📄 Page'}
+        </small>
       </a>
     `).join('');
+
+    empty.style.display = filtered.length ? "none" : "block";
   });
 </script>
 
