@@ -1,50 +1,181 @@
 ---
-import BaseHead from '../components/BaseHead.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
-import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+import MainLayout from "../layouts/MainLayout.astro";
+import { getCollection } from "astro:content";
+
+// ambil tools
+const modules = Object.entries(
+  import.meta.glob('./tools/**/*.astro', { eager: true })
+);
+
+const tools = modules
+  .map(([file, mod]) => {
+    if (!mod.meta) return null;
+
+    const url = file
+      .replace('/src/pages', '')
+      .replace('.astro', '');
+
+    return { url, ...mod.meta };
+  })
+  .filter(Boolean);
+
+// featured tools
+const featuredTools = tools.filter(t => t.featured).slice(0, 6);
+
+// ambil blog
+const posts = (await getCollection("blog"))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 4);
+
+// schema
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "AI Mr Ferdy",
+  url: "https://aimrferdy.net"
+};
 ---
 
-<!doctype html>
-<html lang="en">
-	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-	</head>
-	<body>
-		<Header />
-		<main>
-			<h1>🧑‍🚀 Hello, Astronaut!</h1>
-			<p>
-				Welcome to the official <a href="https://astro.build/">Astro</a> blog starter template. This
-				template serves as a lightweight, minimally-styled starting point for anyone looking to build
-				a personal website, blog, or portfolio with Astro.
-			</p>
-			<p>
-				This template comes with a few integrations already configured in your
-				<code>astro.config.mjs</code> file. You can customize your setup with
-				<a href="https://astro.build/integrations">Astro Integrations</a> to add tools like Tailwind,
-				React, or Vue to your project.
-			</p>
-			<p>Here are a few ideas on how to get started with the template:</p>
-			<ul>
-				<li>Edit this page in <code>src/pages/index.astro</code></li>
-				<li>Edit the site header items in <code>src/components/Header.astro</code></li>
-				<li>Add your name to the footer in <code>src/components/Footer.astro</code></li>
-				<li>Check out the included blog posts in <code>src/content/blog/</code></li>
-				<li>Customize the blog post page layout in <code>src/layouts/BlogPost.astro</code></li>
-			</ul>
-			<p>
-				Have fun! If you get stuck, remember to <a href="https://docs.astro.build/"
-					>read the docs
-				</a> or <a href="https://astro.build/chat">join us on Discord</a> to ask questions.
-			</p>
-			<p>
-				Looking for a blog template with a bit more personality? Check out <a
-					href="https://github.com/Charca/astro-blog-template"
-					>astro-blog-template
-				</a> by <a href="https://twitter.com/Charca">Maxi Ferreira</a>.
-			</p>
-		</main>
-		<Footer />
-	</body>
-</html>
+<MainLayout 
+  title="AI Mr Ferdy - Tools Online Gratis & Blog SEO"
+  description="Platform tools online gratis + blog SEO & AI untuk bantu ranking Google"
+  url="https://aimrferdy.net"
+>
+
+<div class="home-container">
+
+  <!-- HERO -->
+  <section class="home-hero">
+    <h1>All-in-One Tools & AI Platform 🚀</h1>
+    <p>
+      Gunakan tools gratis untuk SEO, teks, gambar, audio, dan lainnya.
+      Tanpa install, langsung pakai.
+    </p>
+
+    <div class="hero-actions">
+      <a href="/tools" class="btn-primary">🚀 Mulai Tools</a>
+      <a href="/blog" class="btn-secondary">📚 Baca Blog</a>
+    </div>
+  </section>
+
+  <!-- TRUST -->
+  <section class="home-trust">
+    <div><strong>{tools.length}+</strong> Tools</div>
+    <div><strong>100%</strong> Gratis</div>
+    <div><strong>Fast</strong> & No Login</div>
+  </section>
+
+  <!-- FEATURED TOOLS -->
+  <section>
+    <div class="section-head">
+      <h2>🔥 Popular Tools</h2>
+      <a href="/tools">Lihat semua →</a>
+    </div>
+
+    <div class="tools-grid">
+      {featuredTools.map(tool => (
+        <a href={tool.url} class="tool-card popular">
+          <div class="badge">HOT</div>
+          <h3>{tool.title}</h3>
+          <p>{tool.description}</p>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- BLOG -->
+<section>
+  <div class="section-head">
+    <h2>📚 Artikel Terbaru</h2>
+    <a href="/blog">Lihat semua →</a>
+  </div>
+
+  <div class="blog-grid">
+    {posts.map(post => (
+      <a href={`/blog/${post.id}/`} class="blog-card">
+
+        <div class="blog-thumb">
+<img src={post.data.heroImage} alt={post.data.title} />
+        </div>
+
+        <div class="blog-content">
+          <h3>{post.data.title}</h3>
+
+          <p class="blog-desc">
+            {post.data.description?.slice(0, 80)}...
+          </p>
+        </div>
+
+      </a>
+    ))}
+  </div>
+</section>
+
+  <!-- CTA -->
+  <section class="home-cta">
+    <h2>Mulai Gunakan Tools Sekarang</h2>
+    <a href="/tools" class="btn-primary">Buka Tools 🚀</a>
+  </section>
+
+</div>
+
+<!-- SEO -->
+<script type="application/ld+json">
+{JSON.stringify(jsonLd)}
+</script>
+
+<style>
+/* BLOG GRID HOMEPAGE */
+.blog-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+/* CARD */
+.blog-card {
+  display: block;
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--card);
+  border: 1px solid var(--border);
+  transition: 0.25s;
+  text-decoration: none;
+  color: inherit;
+}
+
+.blog-card:hover {
+  transform: translateY(-4px);
+}
+
+/* IMAGE FIX */
+.blog-thumb {
+  width: 100%;
+  height: 160px;
+  overflow: hidden;
+}
+
+.blog-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* CONTENT */
+.blog-content {
+  padding: 14px;
+}
+
+.blog-content h3 {
+  font-size: 0.95rem;
+  margin: 0 0 6px;
+  line-height: 1.3;
+}
+
+.blog-desc {
+  font-size: 0.8rem;
+  color: var(--text-soft);
+  line-height: 1.4;
+}</style>
+
+</MainLayout>
