@@ -1,0 +1,140 @@
+---
+const {
+  title = "Tools Online Gratis",
+  description = "Tools gratis SEO, AI, converter",
+  url = "https://aimrferdy.net"
+} = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>{title}</title>
+  <meta name="description" content={description} />
+
+  <link rel="canonical" href={url} />
+  <link rel="sitemap" type="application/xml" href="/sitemap.xml">
+
+  <!-- OG -->
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content={url} />
+
+  <!-- TWITTER -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={title} />
+  <meta name="twitter:description" content={description} />
+
+  <!-- JSON-LD -->
+  <script type="application/ld+json">
+  {JSON.stringify({
+    "@context":"https://schema.org",
+    "@type":"WebSite",
+    "name": title,
+    "description": description,
+    "url": url
+  })}
+  </script>
+
+  <link rel="stylesheet" href="/styles/global.css">
+  <link rel="stylesheet" href="/styles/tools.css">
+</head>
+
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="menu-btn" onclick="toggleMenu()">☰</div>
+
+  <div class="logo">
+    <img src="/logo.png" alt="AI Mr Ferdy">
+  </div>
+
+  <nav id="navMenu">
+    <div class="close-btn" onclick="toggleMenu()">✕ Tutup</div>
+    <a href="/">Home</a>
+    <a href="/tools">Tools</a>
+    <a href="/blog">Blog</a>
+    <a href="/about">Tentang</a>
+  </nav>
+
+  <div class="toggle" onclick="toggleMode()" id="modeIcon">🌙</div>
+</header>
+
+<!-- CONTENT -->
+<main class="container">
+  <slot />
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-container">
+
+    <div class="footer-grid">
+
+      <div>
+        <div class="footer-title">Popular Tools</div>
+        <a href="/tools/qr">QR Generator</a>
+        <a href="/tools/image-converter">Image Converter</a>
+      </div>
+
+      <div>
+        <div class="footer-title">Menu</div>
+        <a href="/">Home</a>
+        <a href="/tools">Tools</a>
+        <a href="/blog">Blog</a>
+      </div>
+
+      <div>
+        <div class="footer-title">Categories</div>
+        <a href="/tools/text">Text</a>
+        <a href="/tools/seo">SEO</a>
+      </div>
+
+    </div>
+
+    <div class="footer-bottom">
+      © 2026 AI MR FERDY
+    </div>
+
+  </div>
+</footer>
+
+<!-- SCRIPT -->
+<script>
+window.toggleMenu = function () {
+  document.getElementById("navMenu").classList.toggle("active");
+};
+
+window.toggleMode = function () {
+  const html = document.documentElement;
+  html.classList.toggle("light-mode");
+
+  const icon = document.getElementById("modeIcon");
+
+  if (html.classList.contains("light-mode")) {
+    localStorage.setItem("theme", "light");
+    if (icon) icon.textContent = "☀️";
+  } else {
+    localStorage.setItem("theme", "dark");
+    if (icon) icon.textContent = "🌙";
+  }
+};
+
+window.addEventListener("DOMContentLoaded", () => {
+  const theme = localStorage.getItem("theme");
+  const icon = document.getElementById("modeIcon");
+
+  if (theme === "light") {
+    document.documentElement.classList.add("light-mode");
+    if (icon) icon.textContent = "☀️";
+  }
+});
+</script>
+
+</body>
+</html>
