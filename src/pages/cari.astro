@@ -1,108 +1,95 @@
 ---
-const toolModules = Object.entries(
+import MainLayout from "../layouts/MainLayout.astro";
+import { getCollection } from "astro:content";
+
+// ================= TOOLS (PAKAI PUNYA KAMU) =================
+const modules = Object.entries(
   import.meta.glob('./tools/**/*.astro', { eager: true })
 );
 
-const tools = toolModules.map(([file, mod]) => {
-  if (!mod.meta) return null;
+const tools = modules
+  .map(([file, mod]) => {
+    if (!mod.meta) return null;
 
-  return {
-    type: "tool",
-    title: mod.meta.title,
-    description: mod.meta.description,
-    url: file.replace('./tools', '/tools').replace('.astro', '')
-  };
-}).filter(Boolean);
+    const url = file
+      .replace('/src/pages', '')
+      .replace('.astro', '');
 
+    return {
+      type: "tool",
+      title: mod.meta.title,
+      description: mod.meta.description,
+      url
+    };
+  })
+  .filter(Boolean);
 
-const blogModules = Object.entries(
-  import.meta.glob('./blog/**/*.astro', { eager: true })
-);
+// ================= BLOG =================
+const posts = await getCollection("blog");
 
-const blogs = blogModules.map(([file, mod]) => {
-  if (!mod.frontmatter) return null;
+const blogs = posts.map(post => ({
+  type: "blog",
+  title: post.data.title,
+  description: post.data.description,
+  url: `/blog/${post.id}/`
+}));
 
-  return {
-    type: "blog",
-    title: mod.frontmatter.title,
-    description: mod.frontmatter.description,
-    url: file.replace('./blog', '/blog').replace('.astro', '')
-  };
-}).filter(Boolean);
-
+// ================= GABUNG =================
 const allContent = [...tools, ...blogs];
 ---
 
-<html>
-<head>
-  <title>Search</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+<MainLayout title="Search">
 
-  <style>
-    body {
-      font-family: sans-serif;
-      max-width: 700px;
-      margin: auto;
-      padding: 20px;
-    }
+<h1>Search</h1>
 
-    input {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 20px;
-    }
+<input id="search" placeholder="Cari tools & blog..." />
 
-    .card {
-      display: block;
-      padding: 10px;
-      border-bottom: 1px solid #ddd;
-      text-decoration: none;
-      color: black;
-    }
+<div id="results"></div>
 
-    small {
-      opacity: 0.6;
-    }
-  </style>
-</head>
+<!-- DATA -->
+<script id="data" type="application/json">
+  {JSON.stringify(allContent)}
+</script>
 
-<body>
+<!-- SCRIPT -->
+<script is:inline>
+  const data = JSON.parse(document.getElementById('data').textContent);
 
-  <h1>Search</h1>
+  const input = document.getElementById('search');
+  const results = document.getElementById('results');
 
-  <input id="search" placeholder="Cari tools & blog..." />
+  input.addEventListener('input', () => {
+    const q = input.value.toLowerCase();
 
-  <div id="results"></div>
+    const filtered = data.filter(item =>
+      item.title.toLowerCase().includes(q) ||
+      item.description?.toLowerCase().includes(q)
+    );
 
-  <!-- data -->
-  <script id="data" type="application/json">
-    {JSON.stringify(allContent)}
-  </script>
+    results.innerHTML = filtered.map(item => `
+      <a href="${item.url}" class="card">
+        <strong>${item.title}</strong>
+        <p>${item.description || ''}</p>
+        <small>${item.type === 'tool' ? '🛠 Tool' : '📝 Blog'}</small>
+      </a>
+    `).join('');
+  });
+</script>
 
-  <!-- script -->
-  <script is:inline>
-    const data = JSON.parse(document.getElementById('data').textContent);
+<style>
+input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 20px;
+}
 
-    const input = document.getElementById('search');
-    const results = document.getElementById('results');
+.card {
+  display: block;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  text-decoration: none;
+  color: inherit;
+}
+</style>
 
-    input.addEventListener('input', () => {
-      const q = input.value.toLowerCase();
-
-      const filtered = data.filter(item =>
-        item.title.toLowerCase().includes(q) ||
-        item.description.toLowerCase().includes(q)
-      );
-
-      results.innerHTML = filtered.map(item => `
-        <a href="${item.url}" class="card">
-          <strong>${item.title}</strong>
-          <p>${item.description}</p>
-          <small>${item.type === 'tool' ? '🛠 Tool' : '📝 Blog'}</small>
-        </a>
-      `).join('');
-    });
-  </script>
-
-</body>
-</html>
+</MainLayout>
