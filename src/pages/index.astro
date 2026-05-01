@@ -2,7 +2,9 @@
 import MainLayout from "../layouts/MainLayout.astro";
 import { getCollection } from "astro:content";
 
-// ambil tools
+// =====================
+// TOOLS
+// =====================
 const modules = Object.entries(
   import.meta.glob('./tools/**/*.astro', { eager: true })
 );
@@ -22,12 +24,19 @@ const tools = modules
 // featured tools
 const featuredTools = tools.filter(t => t.featured).slice(0, 6);
 
-// ambil blog
-const posts = (await getCollection("blog"))
+// =====================
+// BLOG
+// =====================
+const allPosts = await getCollection("blog");
+const totalPosts = allPosts.length;
+
+const posts = allPosts
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
   .slice(0, 4);
 
-// schema
+// =====================
+// SEO
+// =====================
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
@@ -61,6 +70,7 @@ const jsonLd = {
   <!-- TRUST -->
   <section class="home-trust">
     <div><strong>{tools.length}+</strong> Tools</div>
+    <div><strong>{totalPosts}+</strong> Artikel</div>
     <div><strong>100%</strong> Gratis</div>
     <div><strong>Fast</strong> & No Login</div>
   </section>
@@ -84,32 +94,32 @@ const jsonLd = {
   </section>
 
   <!-- BLOG -->
-<section>
-  <div class="section-head">
-    <h2>📚 Artikel Terbaru</h2>
-    <a href="/blog">Lihat semua →</a>
-  </div>
+  <section>
+    <div class="section-head">
+      <h2>📚 Artikel Terbaru</h2>
+      <a href="/blog">Lihat semua →</a>
+    </div>
 
-  <div class="blog-grid">
-    {posts.map(post => (
-      <a href={`/blog/${post.id}/`} class="blog-card">
+    <div class="blog-grid">
+      {posts.map(post => (
+        <a href={`/blog/${post.id}/`} class="blog-card">
 
-        <div class="blog-thumb">
-<img src={post.data.heroImage} alt={post.data.title} />
-        </div>
+          <div class="blog-thumb">
+            <img src={post.data.heroImage} alt={post.data.title} />
+          </div>
 
-        <div class="blog-content">
-          <h3>{post.data.title}</h3>
+          <div class="blog-content">
+            <h3>{post.data.title}</h3>
 
-          <p class="blog-desc">
-            {post.data.description?.slice(0, 80)}...
-          </p>
-        </div>
+            <p class="blog-desc">
+              {post.data.description?.slice(0, 80)}...
+            </p>
+          </div>
 
-      </a>
-    ))}
-  </div>
-</section>
+        </a>
+      ))}
+    </div>
+  </section>
 
   <!-- CTA -->
   <section class="home-cta">
@@ -176,6 +186,7 @@ const jsonLd = {
   font-size: 0.8rem;
   color: var(--text-soft);
   line-height: 1.4;
-}</style>
+}
+</style>
 
 </MainLayout>
